@@ -277,7 +277,7 @@
       
         
           <p>在说关联对象之前，我们先来了解一个重要的概念：类型编码</p>
-<h2 id="类型编码"><a href="#类型编码" class="headerlink" title="类型编码"></a>类型编码</h2><hr>
+<h2 id="类型编码-Type-Encoding"><a href="#类型编码-Type-Encoding" class="headerlink" title="类型编码(Type Encoding)"></a>类型编码(Type Encoding)</h2><hr>
 <p>作为对Runtime的补充，编译器将每个方法的返回值和参数类型编码为一个字符串，并将其与方法的selector关联在一起。这种编码方案在其它情况下也是非常有用的，因此我们可以使用@encode编译器指令来获取它。当给定一个类型时，@encode返回这个类型的字符串编码。这些类型可以是诸如int、指针这样的基本类型，也可以是结构体、类等类型。事实上，任何可以作为sizeof()操作参数的类型都可以用于@encode()。</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/05/13/Runtime的那些事之关联属性/#more" rel="contents">

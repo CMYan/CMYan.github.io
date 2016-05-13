@@ -85,21 +85,21 @@
 
 
 <meta name="description" content="在说关联对象之前，我们先来了解一个重要的概念：类型编码
-类型编码
-作为对Runtime的补充，编译器将每个方法的返回值和参数类型编码为一个字符串，并将其与方法的selector关联在一起。这种编码方案在其它情况下也是非常有用的，因此我们可以使用@encode编译器指令来获取它。当给定一个类型时，@encode返回这个类型的字符串编码。这些类型可以是诸如int、指针这样的基本类型，也可以是结构体、类">
+类型编码(Type Encoding)
+作为对Runtime的补充，编译器将每个方法的返回值和参数类型编码为一个字符串，并将其与方法的selector关联在一起。这种编码方案在其它情况下也是非常有用的，因此我们可以使用@encode编译器指令来获取它。当给定一个类型时，@encode返回这个类型的字符串编码。这些类型可以是诸如int、指针这样">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Runtime的那些事之关联对象">
 <meta property="og:url" content="http://yoursite.com/2016/05/13/Runtime的那些事之关联属性/index.html">
 <meta property="og:site_name" content="陈轶凡的技术博客">
 <meta property="og:description" content="在说关联对象之前，我们先来了解一个重要的概念：类型编码
-类型编码
-作为对Runtime的补充，编译器将每个方法的返回值和参数类型编码为一个字符串，并将其与方法的selector关联在一起。这种编码方案在其它情况下也是非常有用的，因此我们可以使用@encode编译器指令来获取它。当给定一个类型时，@encode返回这个类型的字符串编码。这些类型可以是诸如int、指针这样的基本类型，也可以是结构体、类">
-<meta property="og:updated_time" content="2016-05-13T13:34:23.000Z">
+类型编码(Type Encoding)
+作为对Runtime的补充，编译器将每个方法的返回值和参数类型编码为一个字符串，并将其与方法的selector关联在一起。这种编码方案在其它情况下也是非常有用的，因此我们可以使用@encode编译器指令来获取它。当给定一个类型时，@encode返回这个类型的字符串编码。这些类型可以是诸如int、指针这样">
+<meta property="og:updated_time" content="2016-05-13T13:39:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Runtime的那些事之关联对象">
 <meta name="twitter:description" content="在说关联对象之前，我们先来了解一个重要的概念：类型编码
-类型编码
-作为对Runtime的补充，编译器将每个方法的返回值和参数类型编码为一个字符串，并将其与方法的selector关联在一起。这种编码方案在其它情况下也是非常有用的，因此我们可以使用@encode编译器指令来获取它。当给定一个类型时，@encode返回这个类型的字符串编码。这些类型可以是诸如int、指针这样的基本类型，也可以是结构体、类">
+类型编码(Type Encoding)
+作为对Runtime的补充，编译器将每个方法的返回值和参数类型编码为一个字符串，并将其与方法的selector关联在一起。这种编码方案在其它情况下也是非常有用的，因此我们可以使用@encode编译器指令来获取它。当给定一个类型时，@encode返回这个类型的字符串编码。这些类型可以是诸如int、指针这样">
 
 
 
@@ -278,7 +278,7 @@
 
       
         <p>在说关联对象之前，我们先来了解一个重要的概念：类型编码</p>
-<h2 id="类型编码"><a href="#类型编码" class="headerlink" title="类型编码"></a>类型编码</h2><hr>
+<h2 id="类型编码-Type-Encoding"><a href="#类型编码-Type-Encoding" class="headerlink" title="类型编码(Type Encoding)"></a>类型编码(Type Encoding)</h2><hr>
 <p>作为对Runtime的补充，编译器将每个方法的返回值和参数类型编码为一个字符串，并将其与方法的selector关联在一起。这种编码方案在其它情况下也是非常有用的，因此我们可以使用@encode编译器指令来获取它。当给定一个类型时，@encode返回这个类型的字符串编码。这些类型可以是诸如int、指针这样的基本类型，也可以是结构体、类等类型。事实上，任何可以作为sizeof()操作参数的类型都可以用于@encode()。</p>
 <a id="more"></a>
 <p>在Objective-C Runtime Programming Guide中的<a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100-SW1" target="_blank" rel="external">Type Encoding</a>一节中，列出了Objective-C中所有的类型编码。需要注意的是这些类型很多是与我们用于存档和分发的编码类型是相同的。但有一些不能在存档时使用。</p>
@@ -303,7 +303,7 @@
 <p>可能读到这里有人会说了：类别能加属性？别逗了！</p>
 <p>确实，一般情况下类别只能给现有的类添加实例方法，就有在.h文件里写了@property的属性，在.m里也只是生成了set和get方法，不能用下划线加成员变量名调到该属性，也就谈不上给属性赋值了，只能在这两个方法中写一些别的代码。</p>
 <p>但是，通过关联对象就能实现这些，是不是很神奇？上代码：</p>
-<p><em>注：在存储结构上来说，这并不是一个属性，因为属性列表中没有该变量，不过因为使用起来跟属性一致，姑且就叫它属性吧。</em></p>
+<p><em>注：在存储结构上来说，这并不是一个真正的属性，因为属性列表中没有该变量，不过因为使用起来跟属性一致，姑且就叫它属性吧。</em></p>
 <p>NSObject+AssociatedObject.h文件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">@interface NSObject (AssociatedObject)</span><br><span class="line"></span><br><span class="line">@property (nonatomic, strong) id associatedObject;</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
 <p>NSObject+AssociatedObject.m文件</p>
@@ -445,7 +445,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类型编码"><span class="nav-number">1.</span> <span class="nav-text">类型编码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关联对象-Associated-Object"><span class="nav-number">2.</span> <span class="nav-text">关联对象(Associated Object)</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类型编码-Type-Encoding"><span class="nav-number">1.</span> <span class="nav-text">类型编码(Type Encoding)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关联对象-Associated-Object"><span class="nav-number">2.</span> <span class="nav-text">关联对象(Associated Object)</span></a></li></ol></div>
             
           </div>
         </section>

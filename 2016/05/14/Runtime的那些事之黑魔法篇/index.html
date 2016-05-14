@@ -1,0 +1,581 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="看到黑魔法三个字，我们脑海里首先浮现的是不是这么个画面
+
+我们都知道，黑魔法的力量非常强大，但是如果使用不当也会造成反噬。
+用黑魔法来形容Runtime中的Method Swizzling，更形象地体现了其功能的强大，但同时也必须使用得当，不然会造成严重后果。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Runtime的那些事之黑魔法篇">
+<meta property="og:url" content="http://yoursite.com/2016/05/14/Runtime的那些事之黑魔法篇/index.html">
+<meta property="og:site_name" content="陈轶凡的技术博客">
+<meta property="og:description" content="看到黑魔法三个字，我们脑海里首先浮现的是不是这么个画面
+
+我们都知道，黑魔法的力量非常强大，但是如果使用不当也会造成反噬。
+用黑魔法来形容Runtime中的Method Swizzling，更形象地体现了其功能的强大，但同时也必须使用得当，不然会造成严重后果。">
+<meta property="og:image" content="http://d.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=a3dce691ad18972ba33a07ccdef61cb4/9213b07eca8065387f1d7e9691dda144ac348244.jpg">
+<meta property="og:updated_time" content="2016-05-14T10:07:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Runtime的那些事之黑魔法篇">
+<meta name="twitter:description" content="看到黑魔法三个字，我们脑海里首先浮现的是不是这么个画面
+
+我们都知道，黑魔法的力量非常强大，但是如果使用不当也会造成反噬。
+用黑魔法来形容Runtime中的Method Swizzling，更形象地体现了其功能的强大，但同时也必须使用得当，不然会造成严重后果。">
+<meta name="twitter:image" content="http://d.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=a3dce691ad18972ba33a07ccdef61cb4/9213b07eca8065387f1d7e9691dda144ac348244.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> Runtime的那些事之黑魔法篇 | 陈轶凡的技术博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">陈轶凡的技术博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">没有谎言的四月</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Runtime的那些事之黑魔法篇
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-14T17:04:23+08:00" content="2016-05-14">
+              2016-05-14
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>看到黑魔法三个字，我们脑海里首先浮现的是不是这么个画面</p>
+<p><img src="http://d.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=a3dce691ad18972ba33a07ccdef61cb4/9213b07eca8065387f1d7e9691dda144ac348244.jpg" alt="黑魔法"></p>
+<p>我们都知道，黑魔法的力量非常强大，但是如果使用不当也会造成反噬。</p>
+<p>用黑魔法来形容Runtime中的Method Swizzling，更形象地体现了其功能的强大，但同时也必须使用得当，不然会造成严重后果。</p>
+<a id="more"></a>
+<p>Method Swizzling是改变一个selector的实际实现的技术。通过这一技术，我们可以在运行时通过修改类的分发表中selector对应的函数，来修改方法的实现。</p>
+<p>例如，我们想跟踪在程序中每一个view controller展示给用户的次数：当然，我们可以在每个view controller的viewDidAppear中添加跟踪代码；但是这太过麻烦，需要在每个view controller中写重复的代码。创建一个子类可能是一种实现方式，但需要同时创建UIViewController, UITableViewController, UINavigationController及其它UIKit中view controller的子类，这同样会产生许多重复的代码。</p>
+<p>这种情况下，我们就可以使用Method Swizzling，如在代码所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">@implementation UIViewController (Tool)</span><br><span class="line"></span><br><span class="line">+ (void)load &#123;</span><br><span class="line">    </span><br><span class="line">    static dispatch_once_t onceToken;</span><br><span class="line">    dispatch_once(&amp;onceToken, ^&#123;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        //获取原始和交换的sel</span><br><span class="line">        </span><br><span class="line">        SEL originalSelector = @selector(viewWillAppear:);</span><br><span class="line">        </span><br><span class="line">        SEL swizzledSelector = @selector(cmyan_viewWillAppear:);</span><br><span class="line">        </span><br><span class="line">        Method originalMethod = class_getInstanceMethod(self, originalSelector);</span><br><span class="line">        </span><br><span class="line">        Method swizzledMethod = class_getInstanceMethod(self, swizzledSelector);</span><br><span class="line">        </span><br><span class="line">        //method_getImplementation 获取IMP指针</span><br><span class="line">        BOOL success = class_addMethod(self, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));</span><br><span class="line">        </span><br><span class="line">        if (success) &#123;</span><br><span class="line">            /*</span><br><span class="line">             如果添加方法成功，说明该类中原来没有originalSelector</span><br><span class="line">             并且现在已经添加成功，现在的originalSelector对应的IMP是swizzledMethod的实现</span><br><span class="line">             直接将原来的swizzledSelector代替，IMP指向originalMethod的实现</span><br><span class="line">             这么写是为了防止在之前写方法名时输入错误，输入了一个不存在的方法名</span><br><span class="line">             避免交换时报错，这样做即使写错了方法名，也实现了交换</span><br><span class="line">             但是因为原本就没有这个方法，所以不会发生调用，跟交换前的运行结果一样</span><br><span class="line">            */</span><br><span class="line">            class_replaceMethod(self, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            //添加失败,说明该类原本就存在originalSelector,直接交换Method的IMP指针</span><br><span class="line">            method_exchangeImplementations(originalMethod, swizzledMethod);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)cmyan_viewWillAppear:(BOOL)animated &#123;</span><br><span class="line">    </span><br><span class="line">    [self cmyan_viewWillAppear:animated];</span><br><span class="line">    </span><br><span class="line">    NSLog(@&quot;viewWillAppear: %@&quot;, self);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+<p>在这里，我们通过method swizzling修改了UIViewController的@selector(viewWillAppear:)对应的函数指针，使其实现指向了我们自定义的cmyan_viewWillAppear的实现。这样，当UIViewController及其子类的对象调用viewWillAppear时，都会打印一条日志信息。</p>
+<p>上面的例子很好地展示了使用method swizzling来一个类中注入一些我们新的操作。当然，还有许多场景可以使用method swizzling，在此不多举例。在此我们说说使用method swizzling需要注意的一些问题：</p>
+<h2 id="Swizzling应该总是在-load中执行"><a href="#Swizzling应该总是在-load中执行" class="headerlink" title="Swizzling应该总是在+load中执行"></a>Swizzling应该总是在+load中执行</h2><hr>
+<p>在Objective-C中，运行时会自动调用每个类的两个方法。+load会在类初始加载时调用，+initialize会在第一次调用类的类方法或实例方法之前被调用。这两个方法是可选的，且只有在实现了它们时才会被调用。由于method swizzling会影响到类的全局状态，因此要尽量避免在并发处理中出现竞争的情况。+load能保证在类的初始化过程中被加载，并保证这种改变应用级别的行为的一致性。相比之下，+initialize在其执行时不提供这种保证—事实上，如果在应用中没为给这个类发送消息，则它可能永远不会被调用。</p>
+<h2 id="Swizzling应该总是在dispatch-once中执行"><a href="#Swizzling应该总是在dispatch-once中执行" class="headerlink" title="Swizzling应该总是在dispatch_once中执行"></a>Swizzling应该总是在dispatch_once中执行</h2><hr>
+<p>与上面相同，因为swizzling会改变全局状态，所以我们需要在运行时采取一些预防措施。原子性就是这样一种措施，它确保代码只被执行一次，不管有多少个线程。GCD的dispatch_once可以确保这种行为，我们应该将其作为method swizzling的最佳实践。</p>
+<h2 id="选择器、方法与实现"><a href="#选择器、方法与实现" class="headerlink" title="选择器、方法与实现"></a>选择器、方法与实现</h2><hr>
+<p>在Objective-C中，选择器(selector)、方法(method)和实现(implementation)是运行时中一个特殊点，虽然在一般情况下，这些术语更多的是用在消息发送的过程描述中。</p>
+<p>这些术语在我的上一篇博文中有具体的介绍：<a href="http://cmyan.github.io/2016/05/14/Runtime的那些事之消息转发/" target="_blank" rel="external">Runtime的那些事之消息转发</a></p>
+<p>以下是Objective-C Runtime Reference中的对这几个术语一些描述：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Selector(typedef struct objc_selector *SEL)：用于在运行时中表示一个方法的名称。一个方法选择器是一个C字符串，它是在Objective-C运行时被注册的。选择器由编译器生成，并且在类被加载时由运行时自动做映射操作。</span><br><span class="line">Method(typedef struct objc_method *Method)：在类定义中表示方法的类型</span><br><span class="line">Implementation(typedef id (*IMP)(id, SEL, …))：这是一个指针类型，指向方法实现函数的开始位置。这个函数使用为当前CPU架构实现的标准C调用规范。每一个参数是指向对象自身的指针(self)，第二个参数是方法选择器。然后是方法的实际参数。</span><br><span class="line">理解这几个术语之间的关系最好的方式是：一个类维护一个运行时可接收的消息分发表；分发表中的每个入口是一个方法(Method)，其中key是一个特定名称，即选择器(SEL)，其对应一个实现(IMP)，即指向底层C函数的指针。</span><br></pre></td></tr></table></figure>
+<p>为了swizzle一个方法，我们可以在分发表中将一个方法的现有的选择器映射到不同的实现，而将该选择器对应的原始实现关联到一个新的选择器中。</p>
+<h2 id="调用-cmd"><a href="#调用-cmd" class="headerlink" title="调用_cmd"></a>调用_cmd</h2><hr>
+<p>我们回过头来看看前面新的方法的实现代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- (void)cmyan_viewWillAppear:(BOOL)animated &#123;</span><br><span class="line">    [self cmyan_viewWillAppear:animated];</span><br><span class="line">    NSLog(@&quot;viewWillAppear: %@&quot;, self);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>乍看上去是会导致无限循环的。但令人惊奇的是，并没有出现这种情况。在swizzling的过程中，方法中的[self cmyan_viewWillAppear:animated]已经被重新指定到UIViewController类的-viewWillAppear:中。在这种情况下，不会产生无限循环。不过如果我们调用的是[self viewWillAppear:animated]，则会产生无限循环，因为这个方法的实现在运行时已经被重新指定为cmyan_viewWillAppear:了。</p>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><hr>
+<p>阅读到这我们会发现黑魔法确实威力强大，更确信了其容易产生不可预知的行为和无法预见的后果，虽然它不是最安全的，但如果遵从以下几点预防措施的话，还是比较安全的：</p>
+<ul>
+<li><p>总是调用方法的原始实现(除非有更好的理由不这么做)：API提供了一个输入与输出约定，但其内部实现是一个黑盒。Swizzle一个方法而不调用原始实现可能会打破私有状态底层操作，从而影响到程序的其它部分。</p>
+</li>
+<li><p>避免冲突：给自定义的分类方法加前缀，从而使其与所依赖的代码库不会存在命名冲突。</p>
+</li>
+<li><p>明白是怎么回事：简单地拷贝粘贴swizzle代码而不理解它是如何工作的，不仅危险，而且会浪费学习Objective-C运行时的机会。阅读Objective-C Runtime Reference和查看<objc runtime.h="">头文件以了解事件是如何发生的。</objc></p>
+</li>
+<li><p>小心操作：无论我们对Foundation, UIKit或其它内建框架执行Swizzle操作抱有多大信心，需要知道在下一版本中许多事可能会不一样。</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/14/Runtime的那些事之消息转发/" rel="next" title="Runtime的那些事之消息转发">
+                <i class="fa fa-chevron-left"></i> Runtime的那些事之消息转发
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/IMG_1003.JPG"
+               alt="陈轶凡" />
+          <p class="site-author-name" itemprop="name">陈轶凡</p>
+          <p class="site-description motion-element" itemprop="description">或许前路永夜，即便如此我也要前进，因为星光即使微弱也会为我照亮前路。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Swizzling应该总是在-load中执行"><span class="nav-number">1.</span> <span class="nav-text">Swizzling应该总是在+load中执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Swizzling应该总是在dispatch-once中执行"><span class="nav-number">2.</span> <span class="nav-text">Swizzling应该总是在dispatch_once中执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择器、方法与实现"><span class="nav-number">3.</span> <span class="nav-text">选择器、方法与实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调用-cmd"><span class="nav-number">4.</span> <span class="nav-text">调用_cmd</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注意事项"><span class="nav-number">5.</span> <span class="nav-text">注意事项</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">陈轶凡</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  
+
+  
+
+  
+
+</body>
+</html>

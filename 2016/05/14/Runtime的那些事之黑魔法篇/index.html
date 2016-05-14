@@ -84,25 +84,19 @@
 
 
 
-<meta name="description" content="看到黑魔法三个字，我们脑海里首先浮现的是不是一个魔法师施展强大黑暗魔法的画面
-我们都知道，黑魔法的力量非常强大，但是如果使用不当也会造成反噬。
-用黑魔法来形容Runtime中的Method Swizzling，更形象地体现了其功能的强大，但同时也必须使用得当，不然会造成严重后果。
-Method Swizzling是改变一个selector的实际实现的技术。通过这一技术，我们可以在运行时通过修改类的">
+<meta name="description" content="看到黑魔法三个字，我们脑海里首先浮现的是不是一个魔法师施展强大黑暗魔法的画面？我们都知道，黑魔法的力量非常强大，但是如果使用不当也会造成反噬。用黑魔法来形容Runtime中的Method Swizzling，更形象地体现了其功能的强大，但同时也必须使用得当，不然会造成严重后果。
+Method Swizzling是改变一个selector的实际实现的技术。通过这一技术，我们可以在运行时通过修改类的分">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Runtime的那些事之黑魔法篇">
 <meta property="og:url" content="http://yoursite.com/2016/05/14/Runtime的那些事之黑魔法篇/index.html">
 <meta property="og:site_name" content="陈轶凡的技术博客">
-<meta property="og:description" content="看到黑魔法三个字，我们脑海里首先浮现的是不是一个魔法师施展强大黑暗魔法的画面
-我们都知道，黑魔法的力量非常强大，但是如果使用不当也会造成反噬。
-用黑魔法来形容Runtime中的Method Swizzling，更形象地体现了其功能的强大，但同时也必须使用得当，不然会造成严重后果。
-Method Swizzling是改变一个selector的实际实现的技术。通过这一技术，我们可以在运行时通过修改类的">
-<meta property="og:updated_time" content="2016-05-14T10:19:41.000Z">
+<meta property="og:description" content="看到黑魔法三个字，我们脑海里首先浮现的是不是一个魔法师施展强大黑暗魔法的画面？我们都知道，黑魔法的力量非常强大，但是如果使用不当也会造成反噬。用黑魔法来形容Runtime中的Method Swizzling，更形象地体现了其功能的强大，但同时也必须使用得当，不然会造成严重后果。
+Method Swizzling是改变一个selector的实际实现的技术。通过这一技术，我们可以在运行时通过修改类的分">
+<meta property="og:updated_time" content="2016-05-14T11:35:13.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Runtime的那些事之黑魔法篇">
-<meta name="twitter:description" content="看到黑魔法三个字，我们脑海里首先浮现的是不是一个魔法师施展强大黑暗魔法的画面
-我们都知道，黑魔法的力量非常强大，但是如果使用不当也会造成反噬。
-用黑魔法来形容Runtime中的Method Swizzling，更形象地体现了其功能的强大，但同时也必须使用得当，不然会造成严重后果。
-Method Swizzling是改变一个selector的实际实现的技术。通过这一技术，我们可以在运行时通过修改类的">
+<meta name="twitter:description" content="看到黑魔法三个字，我们脑海里首先浮现的是不是一个魔法师施展强大黑暗魔法的画面？我们都知道，黑魔法的力量非常强大，但是如果使用不当也会造成反噬。用黑魔法来形容Runtime中的Method Swizzling，更形象地体现了其功能的强大，但同时也必须使用得当，不然会造成严重后果。
+Method Swizzling是改变一个selector的实际实现的技术。通过这一技术，我们可以在运行时通过修改类的分">
 
 
 
@@ -280,9 +274,7 @@ Method Swizzling是改变一个selector的实际实现的技术。通过这一�
       
 
       
-        <p>看到黑魔法三个字，我们脑海里首先浮现的是不是一个魔法师施展强大黑暗魔法的画面</p>
-<p>我们都知道，黑魔法的力量非常强大，但是如果使用不当也会造成反噬。</p>
-<p>用黑魔法来形容Runtime中的Method Swizzling，更形象地体现了其功能的强大，但同时也必须使用得当，不然会造成严重后果。</p>
+        <p>看到黑魔法三个字，我们脑海里首先浮现的是不是一个魔法师施展强大黑暗魔法的画面？<br>我们都知道，黑魔法的力量非常强大，但是如果使用不当也会造成反噬。用黑魔法来形容Runtime中的Method Swizzling，更形象地体现了其功能的强大，但同时也必须使用得当，不然会造成严重后果。</p>
 <p>Method Swizzling是改变一个selector的实际实现的技术。通过这一技术，我们可以在运行时通过修改类的分发表中selector对应的函数，来修改方法的实现。</p>
 <a id="more"></a>
 <p>例如，我们想跟踪在程序中每一个view controller展示给用户的次数：当然，我们可以在每个view controller的viewDidAppear中添加跟踪代码；但是这太过麻烦，需要在每个view controller中写重复的代码。创建一个子类可能是一种实现方式，但需要同时创建UIViewController, UITableViewController, UINavigationController及其它UIKit中view controller的子类，这同样会产生许多重复的代码。</p>
@@ -316,6 +308,8 @@ Method Swizzling是改变一个selector的实际实现的技术。通过这一�
 <li><p>小心操作：无论我们对Foundation, UIKit或其它内建框架执行Swizzle操作抱有多大信心，需要知道在下一版本中许多事可能会不一样。</p>
 </li>
 </ul>
+<p>至此，本系列对runtime的整理已完结。当然这只是对runtime的一些基础知识的归纳，力图起个抛砖引玉的作用。还有许多关于runtime有意思东西还需要读者自己去探索发现。</p>
+<p>推荐<a href="http://southpeak.github.io" target="_blank" rel="external">南峰子的博客</a>，博主大部分都借鉴了他的Runtime文章，加上了一些自己的看法和例子。</p>
 
       
     </div>
